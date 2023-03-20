@@ -7,5 +7,5 @@ source "https://rubygems.org"
 gem 'nokogiri'
 gem 'mechanize'
 gem 'open-uri'
-gem 'axlsx'
-
+gem 'csv'
+gem 'pry'

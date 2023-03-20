@@ -1,30 +1,41 @@
 require 'nokogiri'
 require 'open-uri'
-require 'axlsx'
-require 'mechanize'
+require 'csv'
+
+finally = []
+browser = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/536.30.1 (KHTML, like Gecko) Version/6.0.5 Safari/536.30.1'
 
 url = "https://www.nwacsports.org/Letters_of_Intent"
 
-begin
-  # Load the HTML content of the page using Nokogiri and open-uri
-  m = Mechanize.new
-  m.user_agent_alias = "Windows Mozilla"
-  page = m.get(url)
-  doc = Nokogiri::HTML(page)
-rescue Errno::ENOENT => e
-  puts "Error: could not open URL '#{url}' (#{e.message})"
-  exit
+page = URI.open(url, "User-Agent" => "windows Firefox")
+parsed = Nokogiri::HTML(page).xpath('//table')
+
+parsed.xpath("//tr").each do |node|
+    row = []
+    if node.inner_text.include?("Women\'s Basketball")
+            row << node.inner_text.split(" ")
+    end
+        finally << row
 end
 
-rows = doc.xpath('//table[@class="loitable"]/tr[contains(td[2], "Women\'s Basketball")]')
+clean = []
 
-workbook = Axlsx::Package.new
-worksheet = workbook.workbook.add_worksheet(name: "Women's Basketball")
-
-rows.each do |row|
-  data = row.xpath('td').map(&:text)
-  
-  worksheet.add_row(data)
+finally.each do |row|
+    if !row.empty?
+        clean << row
+    end
 end
 
-workbook.serialize("women_basketball.xlsx")
+headers = "" ###Add this later ...  maybe need to grab individual td's
+
+
+CSV.open("nwac_womens_basketball_lois.csv", "wb") do |csv|
+    clean.each do |subArray|
+        csv << subArray
+    end
+end
+
+
+
+
+
