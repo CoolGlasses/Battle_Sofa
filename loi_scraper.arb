@@ -4,7 +4,7 @@ require 'csv'
 
 finally = []
 
-url = "https://www.nwacsports.org/Letters_of_Intent"
+url = "https://www.nwacsports.org/documents/Letters_of_Intent_2024-25"
 
 page = URI.open(url, "User-Agent" => "Windows Firefox")
 parsed = Nokogiri::HTML(page).xpath('//table')
